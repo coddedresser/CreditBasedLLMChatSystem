@@ -1,11 +1,12 @@
 export interface Message {
   id: number;
   chat_id?: number;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | string;   // ✅ Allow any string fallback
   content: string;
   tokens_used?: number;
   created_at: string;
 }
+
 
 export interface Chat {
   id: number;
