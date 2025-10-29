@@ -1,0 +1,427 @@
+# LLM Chat Platform - Folder Structure & Implementation Guide
+
+## 📁 Project Structure
+
+```
+llm-chat-platform/
+│
+├── frontend/                          # Next.js Frontend
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   └── images/
+│   ├── src/
+│   │   ├── app/                      # Next.js 13+ App Router
+│   │   │   ├── (auth)/
+│   │   │   │   ├── login/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── signup/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── layout.tsx
+│   │   │   ├── (dashboard)/
+│   │   │   │   ├── chat/
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── [chatId]/
+│   │   │   │   │       └── page.tsx
+│   │   │   │   ├── organizations/
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── [orgId]/
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── layout.tsx
+│   │   │   ├── api/
+│   │   │   │   └── auth/
+│   │   │   │       └── [...nextauth]/
+│   │   │   │           └── route.ts
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── globals.css
+│   │   ├── components/
+│   │   │   ├── auth/
+│   │   │   │   ├── LoginForm.tsx
+│   │   │   │   ├── SignupForm.tsx
+│   │   │   │   └── GoogleSignInButton.tsx
+│   │   │   ├── chat/
+│   │   │   │   ├── ChatArea.tsx
+│   │   │   │   ├── ChatInput.tsx
+│   │   │   │   ├── ChatMessage.tsx
+│   │   │   │   └── ChatHistory.tsx
+│   │   │   ├── layout/
+│   │   │   │   ├── Sidebar.tsx
+│   │   │   │   ├── TopBar.tsx
+│   │   │   │   └── NotificationPanel.tsx
+│   │   │   ├── organization/
+│   │   │   │   ├── OrganizationCard.tsx
+│   │   │   │   ├── MembersList.tsx
+│   │   │   │   ├── InviteMemberModal.tsx
+│   │   │   │   └── CreateOrgModal.tsx
+│   │   │   └── ui/
+│   │   │       ├── Button.tsx
+│   │   │       ├── Input.tsx
+│   │   │       ├── Modal.tsx
+│   │   │       └── Badge.tsx
+│   │   ├── store/                    # Redux Toolkit
+│   │   │   ├── index.ts
+│   │   │   ├── hooks.ts
+│   │   │   └── slices/
+│   │   │       ├── authSlice.ts
+│   │   │       ├── chatSlice.ts
+│   │   │       ├── organizationSlice.ts
+│   │   │       └── notificationSlice.ts
+│   │   ├── services/
+│   │   │   ├── api.ts               # Axios instance
+│   │   │   ├── authService.ts
+│   │   │   ├── chatService.ts
+│   │   │   ├── organizationService.ts
+│   │   │   └── socketService.ts
+│   │   ├── lib/
+│   │   │   ├── auth.ts              # NextAuth config
+│   │   │   └── utils.ts
+│   │   ├── types/
+│   │   │   ├── auth.types.ts
+│   │   │   ├── chat.types.ts
+│   │   │   ├── organization.types.ts
+│   │   │   └── notification.types.ts
+│   │   └── middleware.ts             # Route protection
+│   ├── .env.local
+│   ├── next.config.js
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── backend/                           # Express Backend
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── database.js
+│   │   │   ├── jwt.js
+│   │   │   ├── google-oauth.js
+│   │   │   └── llm.js
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   ├── chatController.js
+│   │   │   ├── organizationController.js
+│   │   │   ├── userController.js
+│   │   │   └── notificationController.js
+│   │   ├── middleware/
+│   │   │   ├── authMiddleware.js     # JWT verification
+│   │   │   ├── validateRequest.js
+│   │   │   ├── errorHandler.js
+│   │   │   └── creditCheck.js
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   ├── Organization.js
+│   │   │   ├── OrganizationMember.js
+│   │   │   ├── Chat.js
+│   │   │   ├── Message.js
+│   │   │   ├── Notification.js
+│   │   │   └── Invitation.js
+│   │   ├── routes/
+│   │   │   ├── authRoutes.js
+│   │   │   ├── chatRoutes.js
+│   │   │   ├── organizationRoutes.js
+│   │   │   ├── userRoutes.js
+│   │   │   └── notificationRoutes.js
+│   │   ├── services/
+│   │   │   ├── authService.js
+│   │   │   ├── llmService.js         # OpenAI/Ollama integration
+│   │   │   ├── creditService.js
+│   │   │   ├── organizationService.js
+│   │   │   └── notificationService.js
+│   │   ├── sockets/
+│   │   │   ├── socketHandler.js
+│   │   │   └── notificationSocket.js
+│   │   ├── utils/
+│   │   │   ├── tokenHelper.js
+│   │   │   ├── validators.js
+│   │   │   └── logger.js
+│   │   ├── app.js                    # Express app setup
+│   │   └── server.js                 # Server entry point
+│   ├── .env
+│   ├── .gitignore
+│   ├── package.json
+│   └── README.md
+│
+├── database/                          # Database scripts
+│   ├── migrations/
+│   │   ├── 001_create_users.sql
+│   │   ├── 002_create_organizations.sql
+│   │   ├── 003_create_chats.sql
+│   │   ├── 004_create_messages.sql
+│   │   └── 005_create_notifications.sql
+│   └── seeds/
+│       └── initial_data.sql
+│
+├── docker-compose.yml                 # For local PostgreSQL
+├── .gitignore
+└── README.md
+```
+
+## 🚀 Implementation Steps
+
+### Phase 1: Project Setup (Day 1)
+
+#### Step 1.1: Initialize Projects
+```bash
+# Create root directory
+mkdir llm-chat-platform && cd llm-chat-platform
+
+# Initialize frontend
+npx create-next-app@latest frontend --typescript --tailwind --app
+cd frontend
+npm install @reduxjs/toolkit react-redux axios socket.io-client next-auth
+npm install -D @types/node @types/react
+
+# Initialize backend
+cd ..
+mkdir backend && cd backend
+npm init -y
+npm install express cors dotenv jsonwebtoken bcryptjs socket.io pg pg-hstore
+npm install express-validator morgan helmet compression
+npm install openai  # or ollama-node
+npm install google-auth-library
+npm install -D nodemon
+```
+
+#### Step 1.2: Database Setup
+```bash
+# Using Docker for PostgreSQL
+docker-compose up -d
+
+# Or install PostgreSQL locally
+# Then create database
+psql -U postgres
+CREATE DATABASE llm_chat_platform;
+```
+
+### Phase 2: Backend Implementation (Days 2-4)
+
+#### Step 2.1: Database Models (PostgreSQL with pg)
+**Priority Order:**
+1. User model with authentication fields
+2. Organization model
+3. OrganizationMember (join table)
+4. Chat and Message models
+5. Notification model
+6. Invitation model
+
+**Key Fields:**
+- **Users**: id, username, email, password_hash, google_id, credits, created_at
+- **Organizations**: id, name, created_by, created_at
+- **OrganizationMembers**: user_id, organization_id, role (admin/member)
+- **Chats**: id, user_id, organization_id, title, created_at
+- **Messages**: id, chat_id, role (user/assistant), content, tokens_used
+- **Notifications**: id, user_id, type, message, is_read, created_at
+
+#### Step 2.2: Authentication System
+**Implement in order:**
+1. JWT configuration (`config/jwt.js`)
+   - Access token (15min expiry)
+   - Refresh token (7 days expiry)
+2. Password hashing with bcrypt
+3. Login endpoint (`POST /api/auth/login`)
+4. Signup endpoint (`POST /api/auth/signup`)
+   - Auto-create default organization
+   - Assign initial credits (e.g., 1000)
+5. Google OAuth (`POST /api/auth/google`)
+6. Token refresh (`POST /api/auth/refresh`)
+7. Auth middleware for protecting routes
+
+#### Step 2.3: Chat & LLM Integration
+1. Configure LLM service (OpenAI/Ollama)
+2. Create chat endpoint (`POST /api/chat/send`)
+   - Check credits before processing
+   - Send to LLM
+   - Calculate tokens used
+   - Deduct credits
+   - Save message to DB
+3. Get chat history (`GET /api/chat/:chatId`)
+4. List all chats (`GET /api/chat`)
+5. Create new chat (`POST /api/chat`)
+
+#### Step 2.4: Organization Management
+1. Create organization (`POST /api/organizations`)
+2. Rename organization (`PUT /api/organizations/:id`)
+3. Get organization details (`GET /api/organizations/:id`)
+4. List user's organizations (`GET /api/organizations`)
+5. Invite member (`POST /api/organizations/:id/invite`)
+6. List members (`GET /api/organizations/:id/members`)
+
+#### Step 2.5: Real-time Notifications (Socket.IO)
+1. Setup Socket.IO server
+2. Handle connection/disconnection
+3. Implement room-based messaging
+4. Create notification endpoints:
+   - Send global notification (`POST /api/notifications/global`)
+   - Send user notification (`POST /api/notifications/user/:userId`)
+   - Get notifications (`GET /api/notifications`)
+   - Mark as read (`PUT /api/notifications/:id/read`)
+
+### Phase 3: Frontend Implementation (Days 5-7)
+
+#### Step 3.1: Setup Redux Store
+1. Configure store with RTK
+2. Create auth slice (user, token, isAuthenticated)
+3. Create chat slice (messages, activeChat, chatList)
+4. Create organization slice (organizations, activeOrg, members)
+5. Create notification slice (notifications, unreadCount)
+
+#### Step 3.2: Authentication UI
+1. Login page with form validation
+2. Signup page
+3. Google Sign-In button integration
+4. Protected route middleware
+5. Token management (store in httpOnly cookies or localStorage)
+
+#### Step 3.3: Main Chat Interface
+**Layout Structure:**
+1. **Sidebar** (Left - 280px width)
+   - New Chat button
+   - Chat history list
+   - Organization switcher
+   - Settings/Profile at bottom
+
+2. **Main Area** (Center - flex-grow)
+   - Top bar with credits and notifications
+   - Chat messages area (scrollable)
+   - Input box at bottom
+
+3. **Notification Panel** (Right slide-in)
+   - List of notifications
+   - Mark as read functionality
+
+#### Step 3.4: Chat Functionality
+1. Message list component with auto-scroll
+2. Chat input with send button
+3. Loading states (typing indicator)
+4. Error handling (insufficient credits)
+5. New chat creation
+6. Chat history loading
+
+#### Step 3.5: Organization Management
+1. Organization settings page
+2. Rename organization modal
+3. Create organization modal
+4. Members list with roles
+5. Invite member form
+6. Organization switcher dropdown
+
+#### Step 3.6: Socket.IO Integration
+1. Create socket service
+2. Connect on user authentication
+3. Listen for notifications
+4. Update Redux store on new notification
+5. Show toast/badge for new notifications
+6. Handle reconnection logic
+
+### Phase 4: Integration & Testing (Day 8)
+
+#### Step 4.1: Connect Frontend to Backend
+1. Setup Axios interceptors for JWT
+2. Handle token refresh
+3. Error handling (401, 403, 500)
+4. Loading states for all API calls
+
+#### Step 4.2: Testing Checklist
+- [ ] User can signup with email/password
+- [ ] User can login with Google
+- [ ] Default organization is created
+- [ ] Chat sends messages to LLM
+- [ ] Credits deduct correctly
+- [ ] Credit limit prevents sending
+- [ ] Chat history persists
+- [ ] Can create new organizations
+- [ ] Can invite members
+- [ ] Notifications appear in real-time
+- [ ] Can switch between organizations
+
+### Phase 5: Deployment (Day 9)
+
+#### Step 5.1: Backend Deployment (Render/Railway)
+1. Add Procfile or start script
+2. Setup environment variables
+3. Configure PostgreSQL connection
+4. Deploy backend
+5. Test all endpoints
+
+#### Step 5.2: Frontend Deployment (Vercel)
+1. Update API URLs to production
+2. Configure environment variables
+3. Deploy to Vercel
+4. Test full application flow
+
+#### Step 5.3: Database Migration
+1. Run migrations on production DB
+2. Seed initial data if needed
+
+### Phase 6: Documentation & Submission (Day 10)
+
+#### Step 6.1: README Documentation
+Include:
+- Project overview
+- Tech stack
+- Setup instructions (local)
+- Environment variables
+- Database schema
+- API documentation
+- Deployment URLs
+- Screenshots
+
+#### Step 6.2: Code Cleanup
+- Remove console.logs
+- Add comments for complex logic
+- Ensure consistent code style
+- Check for security issues
+- Verify .gitignore files
+
+## 🔑 Key Environment Variables
+
+### Frontend (.env.local)
+```
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
+
+### Backend (.env)
+```
+PORT=5000
+DATABASE_URL=postgresql://user:password@localhost:5432/llm_chat_platform
+JWT_SECRET=your-jwt-secret
+JWT_REFRESH_SECRET=your-refresh-secret
+JWT_EXPIRE=15m
+JWT_REFRESH_EXPIRE=7d
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+OPENAI_API_KEY=your-openai-key
+FRONTEND_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+## 📝 Implementation Priority Tips
+
+1. **Start with Core Flow**: Auth → Chat → Credits
+2. **Add Organization Management**: After basic chat works
+3. **Implement Notifications Last**: They're enhancement features
+4. **Test Each Phase**: Before moving to next
+5. **Use Postman/Thunder Client**: Test backend endpoints first
+6. **Mock Data Initially**: Use dummy responses while building UI
+7. **Responsive Design**: Mobile-first approach with Tailwind
+8. **Error Boundaries**: Add React error boundaries
+9. **Loading States**: Every async operation needs loading UI
+10. **Security**: Sanitize inputs, validate on backend, use HTTPS in production
+
+## 🎯 Success Criteria
+
+- ✅ User can authenticate via email or Google
+- ✅ Default organization created on signup
+- ✅ Chat interface matches design reference
+- ✅ LLM responds to user messages
+- ✅ Credits decrease per message
+- ✅ Cannot send message with 0 credits
+- ✅ Chat history persists across sessions
+- ✅ Can create and manage organizations
+- ✅ Can invite members (stored in DB)
+- ✅ Real-time notifications work
+- ✅ Both apps deployed and accessible
+- ✅ GitHub repo is public with proper README
