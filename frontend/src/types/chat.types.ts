@@ -1,9 +1,9 @@
 export interface Message {
   id: number;
-  chat_id: number;
+  chat_id?: number;
   role: 'user' | 'assistant';
   content: string;
-  tokens_used: number;
+  tokens_used?: number;
   created_at: string;
 }
 
